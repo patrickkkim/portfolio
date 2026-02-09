@@ -1,0 +1,102 @@
+name: Build and Deploy to Cloudflare Pages
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Install Wrangler
+        run: npm install --global wrangler@4
+
+      - name: Ensure Cloudflare Pages project exists
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          CF_PAGES_PROJECT: ${{ secrets.CLOUDFLARE_PAGES_PROJECT_NAME }}
+        run: |
+          set -euo pipefail
+
+          if [ -z "${CLOUDFLARE_API_TOKEN:-}" ]; then
+            echo "Missing secret: CLOUDFLARE_API_TOKEN"
+            exit 1
+          fi
+
+          if [ -z "${CLOUDFLARE_ACCOUNT_ID:-}" ]; then
+            echo "Missing secret: CLOUDFLARE_ACCOUNT_ID"
+            exit 1
+          fi
+
+          if [ -z "${CF_PAGES_PROJECT:-}" ]; then
+            echo "Missing secret: CLOUDFLARE_PAGES_PROJECT_NAME"
+            exit 1
+          fi
+
+          if wrangler pages project list --json | node -e 'let raw=""; process.stdin.on("data",(c)=>raw+=c); process.stdin.on("end",()=>{ const projects=JSON.parse(raw); const target=process.argv[1]; process.exit(projects.some((p)=>p.name===target) ? 0 : 1); });' "$CF_PAGES_PROJECT"; then
+            echo "Cloudflare Pages project already exists: $CF_PAGES_PROJECT"
+          else
+            echo "Cloudflare Pages project not found. Creating: $CF_PAGES_PROJECT"
+            wrangler pages project create "$CF_PAGES_PROJECT" --production-branch main
+          fi
+
+      - name: Sync Cloudflare Pages secrets
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          CF_PAGES_PROJECT: ${{ secrets.CLOUDFLARE_PAGES_PROJECT_NAME }}
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          CONTACT_TO_EMAIL: ${{ secrets.CONTACT_TO_EMAIL }}
+          CONTACT_FROM_EMAIL: ${{ secrets.CONTACT_FROM_EMAIL }}
+        run: |
+          set -euo pipefail
+
+          if [ -z "${CF_PAGES_PROJECT:-}" ]; then
+            echo "Missing secret: CLOUDFLARE_PAGES_PROJECT_NAME"
+            exit 1
+          fi
+
+          if [ -z "${RESEND_API_KEY:-}" ]; then
+            echo "Missing secret: RESEND_API_KEY"
+            exit 1
+          fi
+
+          echo "$RESEND_API_KEY" | wrangler pages secret put RESEND_API_KEY --project-name "$CF_PAGES_PROJECT"
+
+          if [ -n "${CONTACT_TO_EMAIL:-}" ]; then
+            echo "$CONTACT_TO_EMAIL" | wrangler pages secret put CONTACT_TO_EMAIL --project-name "$CF_PAGES_PROJECT"
+          fi
+
+          if [ -n "${CONTACT_FROM_EMAIL:-}" ]; then
+            echo "$CONTACT_FROM_EMAIL" | wrangler pages secret put CONTACT_FROM_EMAIL --project-name "$CF_PAGES_PROJECT"
+          fi
+
+      - name: Deploy to Cloudflare Pages (Production)
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          CF_PAGES_PROJECT: ${{ secrets.CLOUDFLARE_PAGES_PROJECT_NAME }}
+        run: |
+          set -euo pipefail
+          wrangler pages deploy dist --project-name "$CF_PAGES_PROJECT" --branch main
