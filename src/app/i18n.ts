@@ -121,7 +121,7 @@ export const siteCopy: Record<Locale, SiteCopy> = {
       sectionHeadline: 'Navigating the intersection of design and code.',
       items: [
         { title: 'Mobile App - Once a Day', category: 'Google Play · com.onequestion.fox' },
-        { title: '아름다운 랜딩 페이지', category: 'onceaday.app' },
+        { title: 'Beautiful Landing Page', category: 'onceaday.app' },
         { title: 'Data Engineering', category: 'Tridge · Data Platform & Market Intelligence' },
         { title: 'New Overture', category: 'Currently in Development' }
       ]
