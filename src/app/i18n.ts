@@ -71,7 +71,7 @@ export interface SiteCopy {
     }>;
   };
   footer: {
-    twitter: string;
+    instagram: string;
     github: string;
     linkedin: string;
     email: string;
@@ -205,11 +205,11 @@ export const siteCopy: Record<Locale, SiteCopy> = {
       ]
     },
     footer: {
-      twitter: 'Twitter',
+      instagram: 'Instagram',
       github: 'GitHub',
       linkedin: 'LinkedIn',
       email: 'Email',
-      copyright: '© 2024. All rights reserved.'
+      copyright: '© 2026. Seung Hoon Kim / Patrick. All rights reserved.'
     }
   },
   kr: {
@@ -335,11 +335,11 @@ export const siteCopy: Record<Locale, SiteCopy> = {
       ]
     },
     footer: {
-      twitter: '트위터',
+      instagram: '인스타그램',
       github: '깃허브',
       linkedin: '링크드인',
       email: '이메일',
-      copyright: '© 2024. 모든 권리 보유.'
+      copyright: '© 2026. 김승훈 / Patrick. 모든 권리 보유.'
     }
   }
 };

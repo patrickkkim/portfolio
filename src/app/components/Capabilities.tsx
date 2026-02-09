@@ -14,7 +14,11 @@ export function Capabilities({ locale, copy }: CapabilitiesProps) {
       <span className="inline-block rounded-[12px] bg-[#5DD6FF] px-3 py-1 text-[#111111]">데이터 파이프라인</span>까지, 설계부터 운영까지 엔드투엔드로 수행합니다.
     </>
   ) : (
-    copy.sectionHeadline
+    <>
+      From{' '}
+      <span className="inline-block rounded-[12px] bg-[#FF8A5B] px-3 py-1 text-[#111111]">product engineering</span> to{' '}
+      <span className="inline-block rounded-[12px] bg-[#5DD6FF] px-3 py-1 text-[#111111]">data pipelines</span>, I build and run systems end-to-end.
+    </>
   );
 
   return (

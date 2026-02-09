@@ -54,11 +54,24 @@ jobs:
             exit 1
           fi
 
-          if wrangler pages project list --json | node -e 'let raw=""; process.stdin.on("data",(c)=>raw+=c); process.stdin.on("end",()=>{ const projects=JSON.parse(raw); const target=process.argv[1]; process.exit(projects.some((p)=>p.name===target) ? 0 : 1); });' "$CF_PAGES_PROJECT"; then
+          PROJECT_API_URL="https://api.cloudflare.com/client/v4/accounts/${CLOUDFLARE_ACCOUNT_ID}/pages/projects/${CF_PAGES_PROJECT}"
+          PROJECT_STATUS="$(curl -sS -o /dev/null -w "%{http_code}" \
+            -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" \
+            -H "Content-Type: application/json" \
+            "$PROJECT_API_URL")"
+
+          if [ "$PROJECT_STATUS" = "200" ]; then
             echo "Cloudflare Pages project already exists: $CF_PAGES_PROJECT"
-          else
+          elif [ "$PROJECT_STATUS" = "404" ]; then
             echo "Cloudflare Pages project not found. Creating: $CF_PAGES_PROJECT"
             wrangler pages project create "$CF_PAGES_PROJECT" --production-branch main
+          else
+            echo "Failed to verify Cloudflare Pages project (HTTP $PROJECT_STATUS)"
+            curl -sS \
+              -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" \
+              -H "Content-Type: application/json" \
+              "$PROJECT_API_URL"
+            exit 1
           fi
 
       - name: Sync Cloudflare Pages secrets

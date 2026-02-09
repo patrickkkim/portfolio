@@ -94,7 +94,7 @@ export function Projects({ locale, copy }: ProjectsProps) {
 
         <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
           {projectCards.map((project, index) => {
-            const cardClass = `${project.span} ${project.color} ${project.textColor || 'text-black'} group relative flex min-h-[400px] ${project.link ? 'cursor-pointer' : 'cursor-default'} flex-col justify-between overflow-hidden rounded-[32px] p-6`;
+            const cardClass = `${project.span} ${project.color} ${project.textColor || 'text-black'} group relative flex min-h-0 md:min-h-[400px] ${project.link ? 'cursor-pointer' : 'cursor-default'} flex-col overflow-hidden rounded-[32px] p-6`;
             const localeImages = project.imagesByLocale?.[locale];
 
             const cardContent = (
@@ -111,25 +111,25 @@ export function Projects({ locale, copy }: ProjectsProps) {
                   ) : null}
                 </div>
 
-                <div className="absolute inset-0 top-24 mx-auto w-[85%] overflow-hidden rounded-t-[20px] shadow-2xl transition-transform duration-500 group-hover:-translate-y-[10px]">
+                <div className="relative mt-6 h-[260px] w-full overflow-hidden rounded-[20px] shadow-2xl sm:h-[320px] md:absolute md:inset-0 md:top-24 md:mx-auto md:h-auto md:w-[85%] md:rounded-t-[20px] md:transition-transform md:duration-500 md:group-hover:-translate-y-[10px]">
                   {localeImages ? (
                     localeImages.length === 1 ? (
                       <div className="h-full bg-[#0D0D0D] p-3">
                         <div className="h-full overflow-hidden rounded-[16px] border border-[#222]">
-                          <img src={localeImages[0]} alt={`${copy.items[index].title} screenshot`} className="h-full w-full object-cover object-top" />
+                          <img src={localeImages[0]} alt={`${copy.items[index].title} screenshot`} className="h-full w-full object-contain object-top md:object-cover" />
                         </div>
                       </div>
                     ) : (
                       <div className="grid h-full grid-cols-3 gap-3 bg-[#0D0D0D] p-3">
                         {localeImages.map((src, imageIndex) => (
                           <div key={src} className={`overflow-hidden rounded-[16px] border border-[#222] ${imageIndex === 1 ? 'scale-[1.02]' : ''}`}>
-                            <img src={src} alt={`${copy.items[index].title} screenshot ${imageIndex + 1}`} className="h-full w-full object-cover object-top" />
+                            <img src={src} alt={`${copy.items[index].title} screenshot ${imageIndex + 1}`} className="h-full w-full object-contain object-top md:object-cover" />
                           </div>
                         ))}
                       </div>
                     )
                   ) : (
-                    <img src={project.image} alt={copy.items[index].title} className="h-full w-full object-cover object-top" />
+                    <img src={project.image} alt={copy.items[index].title} className="h-full w-full object-contain object-top md:object-cover" />
                   )}
                 </div>
               </>
