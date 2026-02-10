@@ -111,25 +111,25 @@ export function Projects({ locale, copy }: ProjectsProps) {
                   ) : null}
                 </div>
 
-                <div className="relative mt-6 h-[260px] w-full overflow-hidden rounded-[20px] shadow-2xl sm:h-[320px] md:absolute md:inset-0 md:top-24 md:mx-auto md:h-auto md:w-[85%] md:rounded-t-[20px] md:transition-transform md:duration-500 md:group-hover:-translate-y-[10px]">
+                <div className="relative mt-6 w-full overflow-hidden rounded-[20px] shadow-2xl aspect-[16/9] md:absolute md:inset-0 md:top-24 md:mx-auto md:h-auto md:w-[85%] md:aspect-auto md:rounded-t-[20px] md:transition-transform md:duration-500 md:group-hover:-translate-y-[10px]">
                   {localeImages ? (
                     localeImages.length === 1 ? (
                       <div className="h-full bg-[#0D0D0D] p-3">
                         <div className="h-full overflow-hidden rounded-[16px] border border-[#222]">
-                          <img src={localeImages[0]} alt={`${copy.items[index].title} screenshot`} className="h-full w-full object-contain object-top md:object-cover" />
+                          <img src={localeImages[0]} alt={`${copy.items[index].title} screenshot`} className="h-full w-full object-contain object-center md:object-cover" />
                         </div>
                       </div>
                     ) : (
                       <div className="grid h-full grid-cols-3 gap-3 bg-[#0D0D0D] p-3">
                         {localeImages.map((src, imageIndex) => (
-                          <div key={src} className={`overflow-hidden rounded-[16px] border border-[#222] ${imageIndex === 1 ? 'scale-[1.02]' : ''}`}>
-                            <img src={src} alt={`${copy.items[index].title} screenshot ${imageIndex + 1}`} className="h-full w-full object-contain object-top md:object-cover" />
+                          <div key={src} className={`overflow-hidden rounded-[16px] border border-[#222] ${imageIndex === 1 ? 'md:scale-[1.02]' : ''}`}>
+                            <img src={src} alt={`${copy.items[index].title} screenshot ${imageIndex + 1}`} className="h-full w-full object-contain object-center md:object-cover" />
                           </div>
                         ))}
                       </div>
                     )
                   ) : (
-                    <img src={project.image} alt={copy.items[index].title} className="h-full w-full object-contain object-top md:object-cover" />
+                    <img src={project.image} alt={copy.items[index].title} className="h-full w-full object-contain object-center md:object-cover" />
                   )}
                 </div>
               </>
